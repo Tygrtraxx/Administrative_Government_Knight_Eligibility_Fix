@@ -1,0 +1,82 @@
+﻿can_be_knight_trigger = {
+	is_available_quick = {
+		ai = yes
+		hostage = no
+	}
+	can_be_warrior_trigger = { ARMY_OWNER = $ARMY_OWNER$ }
+	trigger_if = { # Admin governors cannot be knights
+	
+			############################################################################################
+			# MOD : Allows you to be able to recruit eligible knights from your guests from the knights,
+			#       tab again while under the administrative government.
+			#
+			# The game normally excludes anyone not a courtier ONLY when you're part of an 
+			# administrative government which is a bit too restrictive because even though it prevents
+			# you from hiring administrative governors (Intended), it prevents you from hiring
+			# eligible champions (knights) in the military tab if they're guests not courtiers.
+			#
+			# Now, you could simply hire them manually by inviting them to your court, and then they would
+			# appear as recruitable in your knights tab, but that's not a fix. So that's why I made this fix.
+			#
+			############################################################################################
+			limit = {
+				$ARMY_OWNER$ = { government_allows = administrative }
+
+				# Only block actual governors/landed officials
+				OR = {
+					is_ruler = yes
+					is_landed = yes
+				}
+			}
+			
+		primary_title ?= {
+			tier < tier_duchy
+			trigger_if = {
+				limit = { is_noble_family_title = yes }
+				always = no
+			}
+		}
+	}
+	trigger_if = {
+		limit = {
+			$ARMY_OWNER$.culture = {
+				has_cultural_parameter = minimum_prowess_for_knights
+			}
+		}
+		prowess >= 12
+	}
+	trigger_if = {
+		limit = {
+			is_clergy = yes
+		}
+		OR = {
+			faith = { has_doctrine_parameter = clergy_can_fight }
+			culture = { has_cultural_parameter = culture_clergy_can_fight }
+			AND = {
+				$ARMY_OWNER$.culture = {
+					has_cultural_parameter = high_prowess_ignores_knight_restrictions
+				}
+				prowess >= 10
+			}
+		}
+	}
+	OR = {
+		AND = {
+			$ARMY_OWNER$.culture = {
+				has_cultural_parameter = high_prowess_ignores_knight_restrictions
+			}
+			prowess >= 10
+		}
+		has_trait = order_member # Order Members will fight for their faith even if their faith says no
+		NOR = {
+			has_trait = blind
+			has_court_position = master_assassin_court_position #FP3 addition
+		}
+	}
+	trigger_if = {
+		limit = {
+			exists = liege.diarch
+		}
+		this != liege.diarch
+	}
+}
