@@ -6,4 +6,4 @@ tags={
 	"Gameplay"
 	"Fixes"
 }
-supported_version="1.18.3.*"
+supported_version="1.18.*"
